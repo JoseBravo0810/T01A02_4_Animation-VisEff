@@ -6,6 +6,9 @@
 package t01a02_3_animation.viseff;
 
 
+import static java.lang.Math.random;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.scene.Group;
@@ -20,6 +23,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
+import javafx.animation.Timeline;
+import javafx.scene.Node;
+import javafx.util.Duration;
 
 /**
  *
@@ -90,7 +96,7 @@ public class T01A02_3_AnimationVisEff extends Application {
         // Añadimos el grupo circulos al grupo raiz (al root)
     //    root.getChildren().add(circles); -> Lo sustituimos por una mezcla de superposicion
     
-        // Mezcla de superposicion
+        // Mezcla de superposicion -> Permite oscurecer una imagen, agregar reflejos, o ambos (depende de los colores que se combinen)
         // El grupo blandModeGroup configura la estructura de la mezcla de superposicion.
         // El grupo tiene dos hijos
         //      1er hijo: Un grupo nuevo, sin nombre, que contiene un nuevo rectangulo negro sin nombre tambien, y el grupo con los circulos que creamos antes
@@ -104,10 +110,39 @@ public class T01A02_3_AnimationVisEff extends Application {
         // Agregamos el grupo de la mezcla de superposicion a la escena como hijo del nodo raiz.
         root.getChildren().add(blendModeGroup);
         
+        /*  Explicacion superposicion
+            Con esto hemos conseguido que el rectangulo del degradado se utilice como la capa de superposicion (overlay).
+            El rectangulo negro sirve para mantener el fondo oscuro, es el que se utiliza como capa de base
+            mientras que los circulos casi transparentes recogen colores del degradado (no olvidemos que el grupo del rectangulo negro con los dos circulos estan en la capa superior
+            al ser transparentes los circulos, dejan visible la capa de overlay (superposicion) que hay debajo con los colores en gradiente (tambien se oscurecen)
+        */
+        
         // Efefcto de desenfoque a los circulos (al grupo entero, por lo tanto afecta a los hijos del grupo, 
         //con esto la linea del borde no sera tan nitida y se veramas gradual
         // Le damos de desenfoque 10 pixeles de ancho y 10 de alto, y la iteracion del desenfoque la ponemos a 3 (desenfoque gaussiano)
         circles.setEffect(new BoxBlur(10, 10, 3));
+        
+        /*
+            Ahora agregamos el efecto de animacion para mover los circulos
+        */
+        Timeline timeline = new Timeline();
+        for(Node circle: circles.getChildren())
+        {
+            timeline.getKeyFrames().addAll(
+                new KeyFrame(Duration.ZERO,
+                    new KeyValue(circle.translateXProperty(), random() * 800),
+                    new KeyValue(circle.translateYProperty(), random() * 600)
+                ),
+                new KeyFrame(new Duration(40000),
+                    new KeyValue(circle.translateXProperty(), random() * 800),
+                    new KeyValue(circle.translateYProperty(), random() * 600)
+                )
+            );
+        }
+        
+        // La animacion dura 40 segundos
+        timeline.play();
+        
         
         // Mostramos el escenario
         primaryStage.show();
