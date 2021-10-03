@@ -123,24 +123,33 @@ public class T01A02_3_AnimationVisEff extends Application {
         circles.setEffect(new BoxBlur(10, 10, 3));
         
         /*
-            Ahora agregamos el efecto de animacion para mover los circulos
+            Ahora agregamos el efecto de animacion para mover los circulos por la pantalla
         */
+        // La animacion esta controlada por un Timeline, lo creamos
         Timeline timeline = new Timeline();
+        // Bucle for para recorrer todos los circulos del grupo cricles y aplicarle la animacion
         for(Node circle: circles.getChildren())
         {
+            // Añadimos dos KeyFrames al timeline que le da animacion a los circulos
             timeline.getKeyFrames().addAll(
+                // El primer KeyFrame se inicia en el segundo 0, por lo tanto es su posicion inicial, la ubicacion donde se inician los circulos en la pantalla
                 new KeyFrame(Duration.ZERO,
+                    // La posicion donde se inician los circulos se determinan mediante la funcion random() de la clase Math, la funcion devuelve un numero etre 1 y 0
+                    // y se multiplica por el tamaño de la pantalla, por lo tanto si ampliamos la pantalla se vera solamente en dimensiones de 800x600, lo demas estara negro
+                    // la primera linea marca la posicion de inicio del eje X, y la segunda la del eje Y
                     new KeyValue(circle.translateXProperty(), random() * 800),
                     new KeyValue(circle.translateYProperty(), random() * 600)
                 ),
+                // Este KeyFrame define la posicion hacia la que se movera cada circulo, vuelve a ser aleatoria, y por el mismo margen,
+                // por lo tanto el movimiento de los circulos al terminar la transicion en 40 segundos (momento en el que se pararán los ciruclos),
+                // tambien se apreciaran margenes negros si ampliamos la pantalla (resize).
                 new KeyFrame(new Duration(40000),
                     new KeyValue(circle.translateXProperty(), random() * 800),
                     new KeyValue(circle.translateYProperty(), random() * 600)
                 )
             );
         }
-        
-        // La animacion dura 40 segundos
+        // Comienza la animacion
         timeline.play();
         
         
